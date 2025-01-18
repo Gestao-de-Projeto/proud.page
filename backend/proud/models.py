@@ -57,3 +57,46 @@ class Notification(models.Model):
     type = models.IntegerField()
     read = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+
+class Product(models.Model):
+
+    PRODUCT_TYPES = [
+        (1, 'CLOTHES'),
+        (2, 'ACCESSORIES')
+    ]
+
+    PRODUCT_SIZES = [
+        (1, 'XS')
+        (2, 'S'),
+        (3, 'M'),
+        (4, 'L'),
+        (5, 'XL'),
+        (6, '2XL')
+    ]
+
+    id = models.AutoField(primary_key=True, null=False)
+    price = models.DecimalField(decimal_places=2, max_digits=8)
+    name = models.TextField(null=False)
+    type = models.IntegerField(choices=PRODUCT_TYPES, null=False)
+    stock = models.IntegerField(null=False, default=0)
+    description = models.TextField(null=False)
+    exclusivity = models.BooleanField(null=False, default=False)
+    size = models.IntegerField(choices=PRODUCT_SIZES, null=False)
+
+
+class Image(models.Model):
+    id = models.AutoField(primary_key=True)
+    path = models.TextField(null=False)
+    image = models.ImageField(upload_to='images/')
+
+
+class MemberRequest(models.Model): 
+    id = models.AutoField(primary_key=True)
+    request_state = models.IntegerField(null=False)
+    image_array = models.ManyToManyField(Image)
+
+
+class Cart(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_array = models.ManyToManyField(Product)
