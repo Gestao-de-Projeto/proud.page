@@ -67,7 +67,7 @@ class Product(models.Model):
     ]
 
     PRODUCT_SIZES = [
-        (1, 'XS')
+        (1, 'XS'),
         (2, 'S'),
         (3, 'M'),
         (4, 'L'),
