@@ -1,15 +1,7 @@
-from django.http import JsonResponse
-from .models import *
-from .utils import *
-from .consts import *
-import json
-from django.views.decorators.csrf import csrf_exempt
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
-from django.contrib.auth.hashers import check_password
+from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
 
 
-@csrf_exempt
 def index(request):
     dados = {'mensagem': 'Olá'}
     return JsonResponse(dados, status=OK)
@@ -100,7 +92,19 @@ def product(request, product_id):
             return JsonResponse(internal_server_error_message(str(e)), status=INTERNAL_SERVER_ERROR)
 
         return JsonResponse({'message': 'Product successfully updated'}, status=OK)
-    elif request.method == 'DELETE':
+    elif request.method == 'DELETE': JsonResponse
+from .models import *
+from .utils import *
+from .consts import *
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.contrib.auth.hashers import check_password
+
+
+@csrf_exempt
+
         product = get_product_by_id(product_id)
         if product is None:
             return JsonResponse(product_not_found_message(product_id), status=NOT_FOUND)
@@ -115,6 +119,8 @@ def product(request, product_id):
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
     
     
+@csrf_exempt
+
 @csrf_exempt
 def login(request):
     if request.method == 'POST':
@@ -164,3 +170,57 @@ def create_newsletter(request):
             return JsonResponse({"message": "Email successfully registered"}, status=200)
         except:
             return JsonResponse({"error": "An error has occurred"}, status=500)
+
+    dados = {'mensagem':'tas a tentar fazer login ze'}
+    return JsonResponse(dados)
+
+
+@csrf_exempt
+#@login_required
+def create_user(request):
+    if request.method == 'POST':
+        form = User(request.POST)
+        form.full_clean()
+        user = form.save()
+        return JsonResponse({'Result': 'User created successfully!'}, status=201)
+        #else:
+        #   return JsonResponse({'Result': 'An error occurred while creating the user.'}, status=400)
+    else:
+        return JsonResponse({'Result':'Request method is invalid.'}, status=405)
+
+
+@csrf_exempt
+@login_required
+def get_users(request):
+    if request.method == 'POST':
+        users = User.objects.all().values()
+        usersdata = list(users)
+            
+        return JsonResponse({'Users': usersdata}, status=200)
+       
+    else:
+        return JsonResponse({'Result':'Request method is invalid.'}, status=405)
+    
+
+@csrf_exempt
+@login_required
+def get_users_by_type(request):
+    if request.method == 'POST':
+        try:
+            user_type = request.POST.get('type')
+
+            if not user_type:
+                return JsonResponse({'Result':'Request structure is invalid.'}, status=400)
+
+            users = User.objects.filter(type=user_type).values(
+                'uuid', 'email', 'name', 'type', 'address', 'nationality'
+            )
+                
+            users_filtered = list(users)
+
+            return JsonResponse({'Users': users_filtered}, status=200)
+        except Exception as e:
+            return JsonResponse({'Result': str(e)}, status=500)
+
+    else:
+        return JsonResponse({'Result':'Request method is invalid.'}, status=405)
