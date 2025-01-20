@@ -94,9 +94,3 @@ def ep_data_validation(data, product):
     return None
 
 
- # regex to validate email
-def validate_email(email):
-    return bool(re.search(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email))
-
-
-

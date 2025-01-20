@@ -174,8 +174,7 @@ def create_newsletter(request):
 
 
 @csrf_exempt
-
-def send_email(request):
+def members(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         subject = data.get('subject')
@@ -186,8 +185,11 @@ def send_email(request):
             return JsonResponse({"error": "Subject, message and email are required"}, status=400)
 
         for email in emails_to:
-            if validate_email(email) == False:
+            try:
+                validate_email(email)
+            except ValidationError:
                 return JsonResponse({"error": "Invalid email format"}, status=400)
+
         try:
             send_mail(
                 subject,
@@ -197,9 +199,17 @@ def send_email(request):
                 fail_silently=False,
             )
             return JsonResponse({"message": "Email sent successfully"}, status=200)
+
+
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+    elif request.method == 'GET':
+        members = User.objects.filter(type=3).values('email')
+        members_list = list(members)
 
+        num_members = len(members_list)
+
+        return JsonResponse({"members": {"members_list": members_list, "num_members": num_members}}, status=200)
 def create_user(request):
     if request.method == 'POST':
         form = User(request.POST)

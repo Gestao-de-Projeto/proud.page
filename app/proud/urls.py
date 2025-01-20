@@ -8,7 +8,7 @@ urlpatterns = [
     path("auth/login/", views.login, name="login"),
 
     path('create-newsletter/', views.create_newsletter, name='create_newsletter'),
-    path("members/", views.send_email, name="members"),
+    path("members/", views.members, name="members"),
 
     path("admin/user/create/", views.create_user, name="createuser"),
     path("admin/users/get/all/", views.get_users, name="checkusers"),
