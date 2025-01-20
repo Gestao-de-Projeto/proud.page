@@ -4,6 +4,9 @@ from .utils import *
 from .consts import *
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.contrib.auth.hashers import check_password
 
 
 @csrf_exempt
@@ -110,3 +113,54 @@ def product(request, product_id):
         return JsonResponse({'message': 'Product successfully deleted'}, status=OK)
     else:
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+    
+    
+@csrf_exempt
+def login(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            password = data.get('password')
+
+            if not email or not password:
+                return JsonResponse({"error": "Email and password are required"}, status=400)
+
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return JsonResponse({"error": "Invalid email or password"}, status=400)
+
+            if check_password(password, user.password):
+                return JsonResponse({"message": "Login successful", "user_uuid": str(user.uuid)}, status=200)
+            else:
+                return JsonResponse({"error": "Invalid email or password"}, status=400)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt    
+def create_newsletter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email')
+        print(email)
+        if not email:
+                return JsonResponse({"error": "Email is required"}, status=400)
+            
+        try:
+            validate_email(email)
+        except ValidationError:
+            return JsonResponse({"error": "Invalid email format"}, status=400)
+
+        if Newsletter.objects.filter(email=email).exists():
+                return JsonResponse({"error": "Email already registered in the newsletter list"}, status=400)
+
+        try:
+            Newsletter.objects.create(email=email)
+            return JsonResponse({"message": "Email successfully registered"}, status=200)
+        except:
+            return JsonResponse({"error": "An error has occurred"}, status=500)
