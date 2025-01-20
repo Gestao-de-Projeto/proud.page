@@ -1,25 +1,28 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    background-color: #D9D9D9;
 }
 
 /* Header Styles */
 .header {
     background-color: #000;
     color: #fff;
-    padding: 10px 20px; /* Ajuste de espaçamento superior e inferior */
+    padding: 10px 0; /* Ajuste de espaçamento superior e inferior */
 }
 
 .nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 20px; /* Adiciona padding lateral para um melhor layout */
 }
 
 .nav-item {
     color: #fff;
     text-decoration: none;
-    margin: 0 10px;
+    margin: 0 5px; /* Reduz o espaçamento entre os itens */
+    font-size: 25px; /* Aumenta o tamanho da fonte */
 }
 
 .nav-item:hover {
@@ -27,9 +30,16 @@ body {
 }
 
 .logo {
-    font-size: 24px;
+    font-size: 35px; /* Aumenta o tamanho da fonte do logo */
     font-weight: bold;
     text-transform: uppercase;
+    margin: 0 10px; /* Adiciona espaçamento lateral ao logo */
+}
+
+/* Ajuste para as imagens */
+.nav-item img {
+    max-height: 50px; /* Limita a altura da imagem para evitar que fique muito grande */
+    vertical-align: middle; /* Alinha verticalmente a imagem com o texto */
 }
 
 .login-container {
@@ -156,3 +166,64 @@ body {
     color: black;
     font-weight: bold;
 }
+
+footer {
+    background-color: #D9D9D9;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+
+  .about-us, .contacts {
+    flex: 1;
+  }
+
+  .about-us {
+    text-align: center;
+  }
+
+  .about-us h2, .contacts h2 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .text-box {
+    width: 80%;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    background-color: #D9D9D9;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .contacts {
+    text-align: center;
+  }
+
+  .contacts p {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    margin-left: 100px;
+    font-weight: bold;
+  }
+
+  .contacts p img {
+    margin-right: 10px;
+    width: 20px; /* Tamanho do ícone */
+    height: 20px;
+    border-radius: 5px;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+  }
