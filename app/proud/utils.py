@@ -1,5 +1,7 @@
 from .models import *
-import re
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+
 
 def get_product_by_id(product_id):
     # para retornar um objeto Product ou None
@@ -93,4 +95,36 @@ def ep_data_validation(data, product):
 
     return None
 
+def login_data_validation(data):
+    required_fields = ['email', 'password']
 
+    missing_fields = [field for field in required_fields if field not in data]
+
+    if missing_fields:
+        return {'error': f'Missing fields: {", ".join(missing_fields)}'}
+
+    return None
+
+
+def invalid_login():
+    return {'error': 'Invalid email or password'}
+
+
+def invalid_email():
+    return {'error': 'Invalid email format'}
+
+
+def register_data_validation(data):
+    required_fields = ['email', 'password']
+
+    missing_fields = [field for field in required_fields if field not in data]
+
+    if missing_fields:
+        return {'error': f'Missing fields: {", ".join(missing_fields)}'}
+
+    try:
+        validate_email(data['email'])
+    except ValidationError:
+        return invalid_email()
+
+    return None

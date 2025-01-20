@@ -18,4 +18,8 @@ from django.urls import include, path
 
 urlpatterns = [
     path('api/', include('proud.urls')),
+<<<<<<< HEAD
+=======
+    # path('', include('proud.urls')),
+>>>>>>> 678b0ea70a229e4277931396cae07b81c9773c55
 ]
