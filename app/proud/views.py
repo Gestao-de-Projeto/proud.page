@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from .models import *
 from .utils import *
 from .consts import *
@@ -121,96 +120,85 @@ def login(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            email = data.get('email')
-            password = data.get('password')
 
-            if not email or not password:
-                return JsonResponse({"error": "Email and password are required"}, status=400)
+            validation_error = login_data_validation(data)
+
+            if validation_error:
+                return JsonResponse(validation_error, status=BAD_REQUEST)
 
             try:
-                user = User.objects.get(email=email)
+                user = User.objects.get(email=data['email'])
             except User.DoesNotExist:
-                return JsonResponse({"error": "Invalid email or password"}, status=400)
+                return JsonResponse(invalid_login(), status=BAD_REQUEST)
 
-            if check_password(password, user.password):
-                return JsonResponse({"message": "Login successful", "user_uuid": str(user.uuid)}, status=200)
+            if check_password(data['password'], user.password):
+                return JsonResponse({"message": "Login successful", "user_uuid": str(user.uuid)}, status=OK)
             else:
-                return JsonResponse({"error": "Invalid email or password"}, status=400)
+                return JsonResponse(invalid_login(), status=BAD_REQUEST)
 
         except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+            return JsonResponse(invalid_json_message(), status=BAD_REQUEST)
+    else:
+        return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
 
-    return JsonResponse({"error": "Method not allowed"}, status=405)
 
-
-@csrf_exempt    
+@csrf_exempt
 def create_newsletter(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        email = data.get('email')
-        print(email)
+        email = data['email']
         if not email:
-            return JsonResponse({"error": "Email is required"}, status=400)
-            
+            return JsonResponse({"error": "Email is required"}, status=BAD_REQUEST)
+
         try:
             validate_email(email)
         except ValidationError:
-            return JsonResponse({"error": "Invalid email format"}, status=400)
+            return JsonResponse(invalid_email(), status=BAD_REQUEST)
 
         if Newsletter.objects.filter(email=email).exists():
-            return JsonResponse({"error": "Email already registered in the newsletter list"}, status=400)
+            return JsonResponse({"error": "Email already registered in the newsletter list"}, status=BAD_REQUEST)
 
         try:
             Newsletter.objects.create(email=email)
-            return JsonResponse({"message": "Email successfully registered"}, status=200)
-        except:
-            return JsonResponse({"error": "An error has occurred"}, status=500)
-
-
-@csrf_exempt
-def create_user(request):
-    if request.method == 'POST':
-        form = User(request.POST)
-        # não sei se isto funciona
-        form.full_clean()
-        user = form.save()
-        return JsonResponse({'Result': 'User created successfully!'}, status=201)
-    else:
-        return JsonResponse({'Result':'Request method is invalid.'}, status=405)
-
-
-@csrf_exempt
-def get_users(request):
-    if request.method == 'POST':
-        # obtém todos os utilizadores
-        users = User.objects.all().values()
-        usersdata = list(users)
-            
-        return JsonResponse({'Users': usersdata}, status=200)
-    else:
-        return JsonResponse({'Result':'Request method is invalid.'}, status=405)
-    
-
-@csrf_exempt
-def get_users_by_type(request):
-    if request.method == 'POST':
-        try:
-            # obtém o tipo de utilizador
-            user_type = request.POST.get('type')
-
-            if not user_type:
-                return JsonResponse({'Result':'Request structure is invalid.'}, status=400)
-
-            # filtra pelo tipo, e mostra todos os campos exceto a palavra-passe
-            users = User.objects.filter(type=user_type).values(
-                'uuid', 'email', 'name', 'type', 'address', 'nationality'
-            )
-                
-            users_filtered = list(users)
-
-            return JsonResponse({'Users': users_filtered}, status=200)
+            return JsonResponse({"message": "Email successfully registered"}, status=OK)
         except Exception as e:
-            return JsonResponse({'Result': str(e)}, status=500)
-
+            return JsonResponse(internal_server_error_message(str(e)), status=INTERNAL_SERVER_ERROR)
     else:
-        return JsonResponse({'Result':'Request method is invalid.'}, status=405)
+        return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+
+
+@csrf_exempt
+def users(request):
+    if request.method == 'GET':
+        # obter todos os utilizadores
+        users = User.objects.all()
+        user_list = list(users.values())
+        return JsonResponse({'users': user_list}, status=OK)
+    elif request.method == 'POST':
+        # criar utilizador
+        data = json.loads(request.body)
+
+        validation_error = register_data_validation(data)
+
+        if validation_error:
+            return JsonResponse(validation_error, status=BAD_REQUEST)
+
+        try:
+            user = User.objects.create(
+                email=data['email'],
+                password=make_password(data['password'])
+            )
+        except Exception as e:
+            return JsonResponse(internal_server_error_message(str(e)), status=INTERNAL_SERVER_ERROR)
+
+        return JsonResponse({'message': 'User successfully created', 'user_uuid': user.uuid}, status=CREATED)
+    else:
+        return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+
+
+@csrf_exempt
+def members(request):
+    if request.method == 'GET':
+        members = User.objects.filter(type=3)
+        member_list = list(members.values())
+        return JsonResponse({'members': member_list}, status=OK)
