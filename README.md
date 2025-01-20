@@ -1,4 +1,4 @@
 # Projeto proud.page
 
-- [Documentação do Backend](backend/README.md)
-- [Documentação do Frontend](frontend/README.md)
+- [Documentação do Backend](app/README.md)
+- [Documentação do Frontend](app/static/proud/README.md)
