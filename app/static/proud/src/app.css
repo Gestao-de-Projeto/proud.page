@@ -7,6 +7,8 @@ body {
 /* Header Styles */
 .header {
     background-color: #000;
+    position: sticky;
+    top: 0px;
     color: #fff;
     padding: 10px 0; /* Ajuste de espaçamento superior e inferior */
 }
@@ -168,62 +170,70 @@ body {
 }
 
 footer {
-    background-color: #D9D9D9;
+    background-color: #000;
+    color: #fff;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.footer-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
+}
 
-  .about-us, .contacts {
+.about-us, .contacts {
     flex: 1;
-  }
+}
 
-  .about-us {
+.about-us {
     text-align: center;
-  }
+}
 
-  .about-us h2, .contacts h2 {
+.about-us h2, .contacts h2 {
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 10px;
-  }
+}
 
-  .text-box {
+.text-box {
     width: 80%;
     margin: 0 auto;
     border: 1px solid #ccc;
-    background-color: #D9D9D9;
+    border-radius: 4px;
+    background-color: #000;
+    color: #fff;
     height: 150px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
     font-size: 1rem;
-  }
+}
 
-  .contacts {
+.contacts {
     text-align: center;
-  }
+}
 
-  .contacts p {
+.contacts p {
     display: flex;
     align-items: center;
     font-size: 1.2rem;
     margin-left: 100px;
     font-weight: bold;
-  }
+}
 
-  .contacts p img {
+.contacts p img {
     margin-right: 10px;
     width: 20px; /* Tamanho do ícone */
     height: 20px;
     border-radius: 5px;
-  }
+}
 
-  .footer-bottom {
+.footer-bottom {
+    background-color: #000;
+    color: #fff;
     text-align: center;
     margin-top: 20px;
     font-weight: bold;
-  }
+}

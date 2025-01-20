@@ -32,3 +32,38 @@ jobs:
                     source: "."
                     target: "/proud"
                     timeout: 60s
+
+            -   name: "Run servers"
+                uses: appleboy/ssh-action@v1.2.0
+                with:
+                    host: ${{ secrets.SSH_HOST }}
+                    username: ${{ secrets.SSH_USERNAME }}
+                    key: ${{ secrets.SSH_KEY }}
+                    script: |
+                        cd /proud
+
+                        export PYTHONPATH=$PYTHONPATH:$(pwd)
+
+                        python3 -m venv app/projectenv
+                        source app/projectenv/bin/activate
+
+                        pip install -r app/requirements.txt
+
+                        (
+                            cd app/static/proud &&
+                            echo "Installing dependencies:" &&
+                            npm install @types/node &&
+                            npm install @rollup/plugin-alias &&
+                            npm install @sveltejs/vite-plugin-svelte &&
+                            npm install @tsconfig/svelte &&
+                            npm install svelte &&
+                            npm install svelte-check &&
+                            npm install tslib &&
+                            npm install typescript &&
+                            npm install vite
+                        )
+
+                        screen -ls | grep -E "^\s*[0-9]+\." | awk '{print $1}' | xargs -I{} screen -X -S {} quit || true
+
+                        screen -dmS django bash -c "cd /proud/app && python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+                        screen -dmS svelte bash -c "cd /proud/app/static/proud && npm run dev"
