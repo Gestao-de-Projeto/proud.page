@@ -19,6 +19,7 @@ class User(models.Model):
     nationality = models.CharField(max_length=100, null=True)
     request_membership = models.BooleanField(default=False)
     phone = models.CharField(max_length=9, null=True)
+    state = models.BooleanField(default=True)
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
@@ -92,12 +93,6 @@ class Image(models.Model):
     id = models.AutoField(primary_key=True)
     path = models.TextField(null=False)
     image = models.ImageField(upload_to='images/')
-
-
-class MemberRequest(models.Model):
-    id = models.AutoField(primary_key=True)
-    request_state = models.IntegerField(null=False)
-    image_array = models.ManyToManyField(Image)
 
 
 class Cart(models.Model):

@@ -280,3 +280,61 @@ def users(request):
         return JsonResponse({'message': 'User successfully created', 'user_uuid': user.uuid}, status=CREATED)
     else:
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+
+
+@csrf_exempt
+def user(request, user_id):
+
+    user = User.objects.get(uuid=user_id)
+    if user and user.state:
+
+
+        if request.method == 'GET':
+
+            return JsonResponse({
+                "email": user.email,
+                "name": user.name,
+                "address": user.address,
+                "nationality": user.nationality,
+                "phone": user.phone,
+                "type": user.type,
+                "request_membership": user.request_membership,#TODO: FRONT-END, quando o utilizador tem um pedido de membro (True), deve ser mostrado uma modal para aceitar ou cancelar esse pedido
+            }, status=OK)
+
+        elif request.method == 'PUT':
+            if user.type == 2:
+                user.type = 3
+                user.request_membership = False
+                user.save()
+                return JsonResponse({"message": "User successfully upgraded to member"}, status=OK)
+            elif user.type == 3:
+                user.type = 2
+                user.request_membership = False
+                user.save()
+                return JsonResponse({"message": "User successfully downgraded to client"}, status=OK)
+            else:
+                return JsonResponse({"error": "Invalid user type"}, status=BAD_REQUEST)
+        else:
+            return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+    else:
+        return JsonResponse({"error": "User not found"}, status=NOT_FOUND)
+@csrf_exempt
+def user_cancel(request, user_id):
+    user = User.objects.get(uuid=user_id)
+    if not user:
+        return JsonResponse({"error": "User not found"}, status=NOT_FOUND)
+
+    if request.method == 'PUT':
+
+        if user.state:
+            user.state = False
+            user.save()
+            return JsonResponse({"message": "User successfully deactivated"}, status=OK)
+        else:
+            return JsonResponse({"message": "User already deactivated"}, status=OK)
+    else:
+        return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+
+
+
+
