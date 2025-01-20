@@ -9,7 +9,7 @@
         event.preventDefault();
         console.log({ email, password, rememberMe });
         try {
-            const response = await fetch('http://localhost:8000/api/auth/login/', {
+            const response = await fetch('/auth/login/', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
