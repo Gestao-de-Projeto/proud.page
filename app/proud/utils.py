@@ -95,6 +95,7 @@ def ep_data_validation(data, product):
 
     return None
 
+
 def login_data_validation(data):
     required_fields = ['email', 'password']
 

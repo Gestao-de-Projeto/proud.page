@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
 
+
 @csrf_exempt
 def index(request):
     dados = {'mensagem': 'Olá'}
@@ -174,7 +175,7 @@ def members(request):
         data = json.loads(request.body)
         subject = data.get('subject')
         message = data.get('message')
-        emails_to = data.get('emails_to') # TODO: TEM DE SER UMA LISTA vinda do front-end
+        emails_to = data.get('emails_to')  # TODO: TEM DE SER UMA LISTA vinda do front-end
 
         if not subject or not message:
             return JsonResponse({"error": "Subject, message and email are required"}, status=BAD_REQUEST)
@@ -205,16 +206,6 @@ def members(request):
         num_members = len(members_list)
 
         return JsonResponse({"members": {"members_list": members_list, "num_members": num_members}}, status=OK)
-def create_user(request):
-    if request.method == 'POST':
-        form = User(request.POST)
-        # não sei se isto funciona
-        form.full_clean()
-        user = form.save()
-        return JsonResponse({'Result': 'User created successfully!'}, status=CREATED)
-    else:
-        return JsonResponse({'Result':'Request method is invalid.'}, status=METHOD_NOT_ALLOWED)
-
 
 
 @csrf_exempt
