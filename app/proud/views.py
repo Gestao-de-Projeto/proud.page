@@ -213,7 +213,7 @@ def members(request):
 @csrf_exempt
 def member(request, user_id):
     if request.method == 'PUT':
-        member = User.objects.filter(uuid=user_id).first()
+        member = User.objects.get(uuid=user_id)
         if not member:
             return JsonResponse({"error": "Member not found"}, status=NOT_FOUND)
 
