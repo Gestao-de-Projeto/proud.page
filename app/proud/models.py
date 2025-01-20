@@ -17,6 +17,8 @@ class User(models.Model):
     name = models.CharField(max_length=100, null=True)
     address = models.CharField(max_length=100, null=True)
     nationality = models.CharField(max_length=100, null=True)
+    request_membership = models.BooleanField(default=False)
+    phone = models.CharField(max_length=9, null=True)
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)

@@ -206,8 +206,24 @@ def members(request):
         num_members = len(members_list)
 
         return JsonResponse({"members": {"members_list": members_list, "num_members": num_members}}, status=OK)
+    else:
+        return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
 
 
+@csrf_exempt
+def member(request, user_id):
+    if request.method == 'PUT':
+        member = User.objects.filter(uuid=user_id)
+        if not member:
+            return JsonResponse({"error": "Member not found"}, status=NOT_FOUND)
+
+        if member['type'] == 3:
+            return JsonResponse({"error": "User is already a member"}, status=BAD_REQUEST)
+        else:
+            member.update(type=3)
+            return JsonResponse({"message": "Membership request was successfully accepted"}, status=OK)
+    else:
+        return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
 @csrf_exempt
 def users(request):
     if request.method == 'GET':
