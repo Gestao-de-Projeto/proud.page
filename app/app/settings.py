@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'proud',
     'django_vite',
+    'proud',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +137,17 @@ STATICFILES_DIRS = [str(BASE_DIR / "static"), DJANGO_VITE_ASSETS_PATH]
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+#Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+EMAIL_USE_TLS = False
+#EMAIL_USE_SSL = False
+
+
+#TODO: Real email settings for production
+#EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+#EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+#DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
