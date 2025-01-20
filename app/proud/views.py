@@ -1,3 +1,4 @@
+import os
 from django.http import JsonResponse
 from .models import *
 from .utils import *
@@ -7,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
-
+from django.core.mail import send_mail
 
 @csrf_exempt
 def index(request):
@@ -162,9 +163,36 @@ def create_newsletter(request):
             Newsletter.objects.create(email=email)
             return JsonResponse({"message": "Email successfully registered"}, status=OK)
         except Exception as e:
-            return JsonResponse(internal_server_error_message(str(e)), status=INTERNAL_SERVER_ERROR)
+            return JsonResponse({"error": str(e)}, status=500)
     else:
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+
+
+@csrf_exempt
+def send_email(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        subject = data.get('subject')
+        message = data.get('message')
+        emails_to = data.get('emails_to') # TODO: TEM DE SER UMA LISTA vinda do front-end
+
+        if not subject or not message:
+            return JsonResponse({"error": "Subject, message and email are required"}, status=400)
+
+        for email in emails_to:
+            if validate_email(email) == False:
+                return JsonResponse({"error": "Invalid email format"}, status=400)
+        try:
+            send_mail(
+                subject,
+                message,
+                os.getenv('EMAIL_HOST_USER'),
+                emails_to,
+                fail_silently=False,
+            )
+            return JsonResponse({"message": "Email sent successfully"}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
 
 @csrf_exempt
