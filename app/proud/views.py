@@ -217,14 +217,42 @@ def member(request, user_id):
         if not member:
             return JsonResponse({"error": "Member not found"}, status=NOT_FOUND)
 
-        if member.type == 3:
-            return JsonResponse({"error": "User is already a member"}, status=BAD_REQUEST)
+        if member.type == 2:
+            if member.request_membership:
+                member.type = 3
+                member.request_membership = False
+                member.save()
+                return JsonResponse({"message": "Membership request was successfully accepted"}, status=OK)
+            else:
+                return JsonResponse({"error": "User did not request a membership"}, status=BAD_REQUEST)
         else:
-            member.type = 3
-            member.save()
-            return JsonResponse({"message": "Membership request was successfully accepted"}, status=OK)
+            return JsonResponse({"error": "User is already a member"}, status=BAD_REQUEST)
+
     else:
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+
+
+@csrf_exempt
+def member_reject(request, user_id):
+    if request.method == 'PUT':
+        member = User.objects.get(uuid=user_id)
+        if not member:
+            return JsonResponse({"error": "Member not found"}, status=NOT_FOUND)
+
+        if member.type == 2:
+            if member.request_membership:
+                member.request_membership = False
+                member.save()
+                return JsonResponse({"message": "Membership request was successfully rejected"}, status=OK)
+            else:
+                return JsonResponse({"error": "User did not request a membership"}, status=BAD_REQUEST)
+        else:
+            return JsonResponse({"error": "User is already a member"}, status=BAD_REQUEST)
+
+    else:
+        return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+
+
 @csrf_exempt
 def users(request):
     if request.method == 'GET':
