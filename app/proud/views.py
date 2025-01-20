@@ -213,14 +213,15 @@ def members(request):
 @csrf_exempt
 def member(request, user_id):
     if request.method == 'PUT':
-        member = User.objects.filter(uuid=user_id)
+        member = User.objects.filter(uuid=user_id).first()
         if not member:
             return JsonResponse({"error": "Member not found"}, status=NOT_FOUND)
 
-        if member['type'] == 3:
+        if member.type == 3:
             return JsonResponse({"error": "User is already a member"}, status=BAD_REQUEST)
         else:
-            member.update(type=3)
+            member.type = 3
+            member.save()
             return JsonResponse({"message": "Membership request was successfully accepted"}, status=OK)
     else:
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
