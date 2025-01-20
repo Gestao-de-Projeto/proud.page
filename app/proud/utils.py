@@ -1,5 +1,5 @@
 from .models import *
-
+import re
 
 def get_product_by_id(product_id):
     # para retornar um objeto Product ou None
@@ -92,3 +92,11 @@ def ep_data_validation(data, product):
         return {'error': 'Invalid value for size'}
 
     return None
+
+
+ # regex to validate email
+def validate_email(email):
+    return bool(re.search(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email))
+
+
+
