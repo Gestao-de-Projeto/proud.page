@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+
+
     path("admin/", views.index, name="index"),
     path("products/", views.products, name="products"),
     path("products/<int:product_id>/", views.product, name="product"),
@@ -9,6 +11,7 @@ urlpatterns = [
 
 
     path('create-newsletter/', views.create_newsletter, name='create_newsletter'),
+
     path("members/", views.members, name="members"),
 
     path("admin/user/create/", views.create_user, name="createuser"),
@@ -16,7 +19,6 @@ urlpatterns = [
     path("admin/users/get/by_type", views.get_users_by_type, name="checkmembers"),
 
     path("users/", views.users, name="users"),
-    path("users/members/", views.members, name="members"),
 
     path('create-newsletter/', views.create_newsletter, name='create_newsletter')
 ]
