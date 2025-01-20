@@ -1,6 +1,10 @@
+
 import os
 
 from django.http import JsonResponse
+from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+
 from .models import *
 from .utils import *
 from .consts import *
@@ -115,8 +119,8 @@ def product(request, product_id):
         return JsonResponse({'message': 'Product successfully deleted'}, status=OK)
     else:
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
-    
-    
+
+
 @csrf_exempt
 def login(request):
     if request.method == 'POST':
@@ -151,7 +155,8 @@ def create_newsletter(request):
         email = data.get('email')
         print(email)
         if not email:
-                return JsonResponse({"error": "Email is required"}, status=400)
+
+            return JsonResponse({"error": "Email is required"}, status=400)
 
         try:
             validate_email(email)
@@ -159,7 +164,7 @@ def create_newsletter(request):
             return JsonResponse({"error": "Invalid email format"}, status=400)
 
         if Newsletter.objects.filter(email=email).exists():
-                return JsonResponse({"error": "Email already registered in the newsletter list"}, status=400)
+            return JsonResponse({"error": "Email already registered in the newsletter list"}, status=400)
 
         try:
             Newsletter.objects.create(email=email)
@@ -169,6 +174,7 @@ def create_newsletter(request):
 
 
 @csrf_exempt
+
 def send_email(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -193,3 +199,50 @@ def send_email(request):
             return JsonResponse({"message": "Email sent successfully"}, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+
+def create_user(request):
+    if request.method == 'POST':
+        form = User(request.POST)
+        # não sei se isto funciona
+        form.full_clean()
+        user = form.save()
+        return JsonResponse({'Result': 'User created successfully!'}, status=201)
+    else:
+        return JsonResponse({'Result':'Request method is invalid.'}, status=405)
+
+
+@csrf_exempt
+def get_users(request):
+    if request.method == 'POST':
+        # obtém todos os utilizadores
+        users = User.objects.all().values()
+        usersdata = list(users)
+            
+        return JsonResponse({'Users': usersdata}, status=200)
+    else:
+        return JsonResponse({'Result':'Request method is invalid.'}, status=405)
+    
+
+@csrf_exempt
+def get_users_by_type(request):
+    if request.method == 'POST':
+        try:
+            # obtém o tipo de utilizador
+            user_type = request.POST.get('type')
+
+            if not user_type:
+                return JsonResponse({'Result':'Request structure is invalid.'}, status=400)
+
+            # filtra pelo tipo, e mostra todos os campos exceto a palavra-passe
+            users = User.objects.filter(type=user_type).values(
+                'uuid', 'email', 'name', 'type', 'address', 'nationality'
+            )
+                
+            users_filtered = list(users)
+
+            return JsonResponse({'Users': users_filtered}, status=200)
+        except Exception as e:
+            return JsonResponse({'Result': str(e)}, status=500)
+
+    else:
+        return JsonResponse({'Result':'Request method is invalid.'}, status=405)

@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.hashers import make_password
+from django import forms
 
 
 class User(models.Model):
