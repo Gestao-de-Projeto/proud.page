@@ -10,4 +10,3 @@
     <Route path="/" component={Login} />
     <Route path="/admin" component={AdminPage} />
 </Router>
-

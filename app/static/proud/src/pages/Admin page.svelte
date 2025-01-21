@@ -69,7 +69,7 @@
                 },
                 body: JSON.stringify({
                     title,
-                    content,                                                                            
+                    content,
                     //faltam as imagens
                 })
             });
@@ -119,14 +119,14 @@
     <div class="dashboard-title">
         <h1>Members</h1>
     </div>
-    
+
     <div class="members-container">
         <h2>Members</h2>
         <ul class="member-list">
             {#each members as member}
                 <li class="member">
-                    <img src="/static/proud/assets/utilizador-circulo.png"><p>{member.email}</p>
-                    <!-- não existem redes sociais nem ids para listar -->    
+                    <img alt="" src="/static/proud/assets/utilizador-circulo.png"><p>{member.email}</p>
+                    <!-- não existem redes sociais nem ids para listar -->
                 </li>
             {/each}
         </ul>
@@ -138,12 +138,12 @@
                 <li class="request">
 
                     <form on:submit={handleRequest}>
-                        <img src="/static/proud/assets/utilizador-circulo.png">
+                        <img alt="" src="/static/proud/assets/utilizador-circulo.png">
                         <p>{request.email}</p>
                         <input type="hidden" name="user_id" value="{request.user_id}" />
                         <button type="submit" name="action" value="approve">Accept</button>
                         <button type="submit" name="action" value="reject">
-                            <img src="/static/proud/assets/eliminar.png">
+                            <img alt="" src="/static/proud/assets/eliminar.png">
                         </button>
                     </form>
                 </li>
@@ -156,7 +156,6 @@
             {#if num_members >= 0}
             <p>{num_members}</p>
             {/if}
-            
         </div>
     </div>
     <div class="notify-members">
@@ -174,9 +173,8 @@
                 placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porttitor."
                 bind:value={content}
                 required
-            />
+            ></textarea>
             <input type="file">
-            
             <!-- falta poder selecionar os emails para enviar a notificação -->
 
             <button type="submit">Submit</button>

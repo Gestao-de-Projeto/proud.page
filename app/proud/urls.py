@@ -17,5 +17,3 @@ urlpatterns = [
     path('create-newsletter/', views.create_newsletter, name='create_newsletter'),
     path('requests/', views.requests, name="requests")
 ]
-
-

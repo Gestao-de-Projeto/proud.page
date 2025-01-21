@@ -3,14 +3,14 @@ name: Deploy to VPS
 on:
     push:
         branches:
-            - main # later, change to main
+            - dev # later, change to main
 
 jobs:
     deploy:
         runs-on: ubuntu-latest
 
         steps:
-            -   name: "Get latest NixOS configuration"
+            -   name: "Checkout"
                 uses: actions/checkout@v4
 
             -   name: "Clean /proud directory on remote"
@@ -33,7 +33,7 @@ jobs:
                     target: "/proud"
                     timeout: 60s
 
-            -   name: "Run servers"
+            -   name: "Run server"
                 uses: appleboy/ssh-action@v1.2.0
                 with:
                     host: ${{ secrets.SSH_HOST }}
@@ -63,7 +63,18 @@ jobs:
                             npm install vite
                         )
 
+                        (
+                            cd app/static/proud &&
+                            echo "Building frontend:" &&
+                            npm run build
+                        )
+
+                        (
+                            cd app/ &&
+                            echo "Collecting static files:" &&
+                            python manage.py collectstatic
+                        )
+
                         screen -ls | grep -E "^\s*[0-9]+\." | awk '{print $1}' | xargs -I{} screen -X -S {} quit || true
 
                         screen -dmS django bash -c "cd /proud/app && python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
-                        screen -dmS svelte bash -c "cd /proud/app/static/proud && npm run dev"

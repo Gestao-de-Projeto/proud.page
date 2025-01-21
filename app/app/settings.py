@@ -27,10 +27,13 @@ SECRET_KEY = 'django-insecure-rz8c#ck$(c+h)9j#uos-ku*npz1fc^ctn)$=6hfw@*-!*+)a6!
 # SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '130.61.74.203',
+]
 
 # Application definition
 
@@ -47,13 +50,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -122,24 +125,32 @@ USE_I18N = True
 
 USE_TZ = True
 
-DJANGO_VITE_DEV_MODE = True
+DJANGO_VITE_DEV_MODE = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_ROOT = "/staticfiles"
-STATIC_URL = "/static/"
-
 DJANGO_VITE = {
     "default": {
-        "dev_mode": True,
-        # "static_url_prefix": "static/",
-        "dev_server_port": 5173,
+        "manifest_path": BASE_DIR / "static" / "build" / ".vite" / "manifest.json",
     }
 }
 
-DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static" / "proud" / "assets"
-STATICFILES_DIRS = [str(BASE_DIR / "static"), DJANGO_VITE_ASSETS_PATH]
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    BASE_DIR / "static" / "build",
+    BASE_DIR / "static" / "proud",
+    BASE_DIR / "static" / "proud" / "assets",
+]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
