@@ -15,7 +15,7 @@ urlpatterns = [
     path("products/", views.products, name="products"),
     path("products/<int:product_id>/", views.product, name="product"),
     path('create-newsletter/', views.create_newsletter, name='create_newsletter'),
-
+    path('requests/', views.requests, name="requests")
 ]
 
 

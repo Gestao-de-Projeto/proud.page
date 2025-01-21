@@ -196,7 +196,6 @@ def members(request):
             )
             return JsonResponse({"message": "Email sent successfully"}, status=OK)
 
-
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=INTERNAL_SERVER_ERROR)
     elif request.method == 'GET':
@@ -284,10 +283,8 @@ def users(request):
 
 @csrf_exempt
 def user(request, user_id):
-
     user = User.objects.get(uuid=user_id)
     if user and user.state:
-
 
         if request.method == 'GET':
 
@@ -318,6 +315,8 @@ def user(request, user_id):
             return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
     else:
         return JsonResponse({"error": "User not found"}, status=NOT_FOUND)
+    
+
 @csrf_exempt
 def user_cancel(request, user_id):
     user = User.objects.get(uuid=user_id)
@@ -336,5 +335,12 @@ def user_cancel(request, user_id):
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
 
 
-
-
+@csrf_exempt
+def requests(request):
+    if request.method == "GET":
+        requests = Request.objects.all()
+        request_list = list(requests.values())
+        return JsonResponse({'requests': request_list}, status=OK)
+    else:
+        return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
+        
