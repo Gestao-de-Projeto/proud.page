@@ -1,5 +1,6 @@
 import os
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from .models import *
 from .utils import *
 from .consts import *
@@ -341,6 +342,23 @@ def requests(request):
         requests = Request.objects.all()
         request_list = list(requests.values())
         return JsonResponse({'requests': request_list}, status=OK)
+            
+    elif request.method == "POST":
+        data = json.loads(request.body)
+
+        user_uuid = data['uuid']
+        user_instance = get_object_or_404(User, uuid=user_uuid)
+
+        try:
+            request = Request.objects.create(
+                state=1,
+                user=user_instance,
+                #images=data['Images']
+            )
+        except Exception as e:
+            return JsonResponse(internal_server_error_message(str(e)), status=INTERNAL_SERVER_ERROR)
+
+        return JsonResponse({'message': 'Request successfully created', 'id': request.id}, status=CREATED)
+
     else:
         return JsonResponse(invalid_http_method(), status=METHOD_NOT_ALLOWED)
-        

@@ -93,7 +93,7 @@ class Product(models.Model):
     description = models.TextField(null=False)
     exclusivity = models.BooleanField(null=False, default=False)
     size = models.IntegerField(choices=PRODUCT_SIZES, null=False)
-    images = models.ForeignKey(Image, on_delete=models.SET_NULL)
+    images = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True)
 
 
 class Cart(models.Model):
@@ -112,4 +112,4 @@ class Request(models.Model):
     id = models.AutoField(primary_key=True)
     state = models.IntegerField(choices=REQUEST_TYPES, null=False)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    images = models.ForeignKey(Image, on_delete=models.SET_NULL)
+    images = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True)
